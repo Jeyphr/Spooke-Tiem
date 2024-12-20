@@ -1,0 +1,13 @@
+fileFormatVersion: 2
+guid: 2d00709d64bd95a43b1ea0382eaef6f7
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - notification_prefab: {fileID: 7224074984053932458, guid: a37d05fd67d01d648bfd9d30eee5539a, type: 3}
+  - terminal_prefab: {instanceID: 0}
+  executionOrder: 300
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
