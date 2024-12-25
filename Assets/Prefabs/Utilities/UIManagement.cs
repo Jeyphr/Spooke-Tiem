@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using UnityEngine;
 
 public class UIManagement : MonoBehaviour
@@ -9,8 +10,7 @@ public class UIManagement : MonoBehaviour
     /// the various pause screens and hud elements
     /// </summary>
     public static UIManagement Instance { get; private set; }
-    public static TerminalManager terminalManager;
-    public static InputManager inputManager;
+    public TerminalManager terminalManager;
 
     //vars
     public enum uiState
@@ -33,14 +33,46 @@ public class UIManagement : MonoBehaviour
 
 
 
-        switchUIState(uiState.Gameplay);
+        switchUIState(uiState.Terminal);
+    }
+
+    private void Start()
+    {
+        //Debug.Log("uimanageer: " + inputDookickey.name);
     }
 
     private void Update()
     {
-        if (inputManager.isPressingDebugKey(KeyCode.K,isDebugMode))
+        if (isPressingKey(KeyCode.Escape))
         {
-            Debug.Log("k");
+            page = uiState.Paused;
+            switchUIState(page);
+        }
+        if (isPressingKey(KeyCode.Tilde))
+        {
+            page = uiState.Terminal;
+            switchUIState(page);
+        }
+        if (isPressingKey(KeyCode.Tab))
+        {
+            page = uiState.Shop;
+            switchUIState(page);
+        }
+
+        if (isPressingDebugKey(KeyCode.J, isDebugMode))
+        {
+            page = uiState.Paused;
+            switchUIState(page);
+        }
+        if (isPressingDebugKey(KeyCode.K, isDebugMode))
+        {
+            page = uiState.Terminal;
+            switchUIState(page);
+        }
+        if (isPressingDebugKey(KeyCode.L, isDebugMode))
+        {
+            page = uiState.Shop;
+            switchUIState(page);
         }
     }
     #endregion
@@ -138,6 +170,22 @@ public class UIManagement : MonoBehaviour
         hideCanvas(gamePlayScreen);
     }
 
+    #endregion
+
+    #region Input
+    public bool isPressingDebugKey(KeyCode key, bool isDebugMode)
+    {
+        if (Input.GetKeyDown(key) && isDebugMode)
+            return true;
+        return false;
+    }
+
+    public bool isPressingKey(KeyCode key)
+    {
+        if (Input.GetKeyDown(key))
+            return true;
+        return false;
+    }
     #endregion
 
     #region Singleton Stuff

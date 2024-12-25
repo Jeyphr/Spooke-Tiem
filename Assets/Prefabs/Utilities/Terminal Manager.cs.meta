@@ -6,7 +6,7 @@ MonoImporter:
   defaultReferences:
   - notification_prefab: {fileID: 7224074984053932458, guid: a37d05fd67d01d648bfd9d30eee5539a, type: 3}
   - terminal_prefab: {instanceID: 0}
-  executionOrder: 300
+  executionOrder: -1400
   icon: {instanceID: 0}
   userData: 
   assetBundleName: 

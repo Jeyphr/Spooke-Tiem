@@ -12,8 +12,7 @@ public class TerminalManager : MonoBehaviour
     /// Manages the whatever
     /// </summary>
     public static TerminalManager   Instance { get; private set; }
-    private static UIManagement     uiManagement;
-    private static InputManager     inputManager;
+    private UIManagement     uiManagement;
 
 
     //private vars
@@ -44,10 +43,10 @@ public class TerminalManager : MonoBehaviour
     #region Pinger
     public void createNotif(string t = "Ping")
     {
+        noteCount++;
+        Debug.Log("Note " + noteCount + ": " + t);
         try
         {
-            noteCount++;    
-
             GameObject      notif           = Instantiate(notification_prefab, terminal_prefab.transform);
             TextMeshProUGUI notifText       = notif.GetComponentInChildren<TextMeshProUGUI>();
 
@@ -73,7 +72,19 @@ public class TerminalManager : MonoBehaviour
     #endregion
 
     #region Inputs and Stuff
+    public bool isPressingDebugKey(KeyCode key, bool isDebugMode)
+    {
+        if (Input.GetKeyDown(key) && isDebugMode)
+            return true;
+        return false;
+    }
 
+    public bool isPressingKey(KeyCode key)
+    {
+        if (Input.GetKeyDown(key))
+            return true;
+        return false;
+    }
     #endregion
 
     #region Singleton Stuff

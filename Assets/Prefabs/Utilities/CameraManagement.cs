@@ -15,16 +15,23 @@ public class CameraManagement : MonoBehaviour
 
     //vars
     public static CameraManagement Instance { get; private set; }
+    public TerminalManager terminalManager;
 
 
     [Header("Object References")]
-    [SerializeField] private Camera[]     arrCams;
-    [SerializeField] private Camera       cam_player;
-    [SerializeField] private Transform    lookatPos;
+    [SerializeField] private Camera[]   arrCams;
+    [SerializeField] private Camera     cam_player, cam_start;
+    [SerializeField] private Transform  lookatPos;
+
+    [Header("Player Shenannigans")]
+    [SerializeField] private PlayerMovement pMove;
+    [SerializeField] private PlayerFreecam  pLook;
+
     public bool isDebugMode = false;
+    private int cameraIndex = 0;
 
     //private vars
-    private Camera cam_active;
+    public Camera cam_active;
     
 
 
@@ -32,25 +39,31 @@ public class CameraManagement : MonoBehaviour
     private void Awake()
     {
         checkSingleton();
-
-        setCurrentCamera(cam_player);
-
-        //setvars
+    }
+    private void Start()
+    {
         arrCams = findAllCamsInScene();
-        cam_active = Camera.main;
+        setCurrentCamera(cam_start);
     }
     private void Update()
     {
 
-        if (isPressingDebugKey(KeyCode.J))
-        {
-            swapCameras(cam_player);
-            snapLook(lookatPos);
-        }
 
-        if (isPressingDebugKey(KeyCode.K))
+        if (isPressingDebugKey(KeyCode.J, isDebugMode))
         {
-            resetLook(cam_active);
+            cameraIndex++;
+            Debug.Log("Camera Index: " + cameraIndex);
+            if (cameraIndex < arrCams.Length)
+            {
+                
+                swapCameras(arrCams[cameraIndex]);
+            }
+            else 
+            {
+                cameraIndex = 0;
+                swapCameras(arrCams[cameraIndex]);
+            }
+
         }
     }
     #endregion
@@ -70,9 +83,10 @@ public class CameraManagement : MonoBehaviour
             return;
         }
 
+        lockPlayer(swapCam);
+
         foreach (var cam in arrCams)
         {
-            Debug.Log("Disabling:\t" + cam.name);
             cam.enabled = false;
         }
         cam_active = swapCam;
@@ -143,12 +157,12 @@ public class CameraManagement : MonoBehaviour
 
     public void setCurrentCamera(Camera cam)
     {
+        lockPlayer(cam);
         if (cam == null || cam.enabled == false)
         {
             Debug.Log("Cam is either null or disabled.");
             return;
         }
-
         cam_active = cam;
     }
     #endregion
@@ -171,10 +185,40 @@ public class CameraManagement : MonoBehaviour
     }
     #endregion
 
+    #region Tests
+
+    #endregion
+
+    #region Locks
+    private void lockPlayer(Camera cam)
+    {
+        pMove.IsFrozen = true;
+        pLook.IsLocked = true;
+
+        if (cam == cam_player)
+        { 
+            pMove.IsFrozen = false; 
+            pLook.IsLocked = false; 
+        }
+        else 
+        { 
+            pMove.IsFrozen = true; 
+            pLook.IsLocked = true;
+        }
+    }
+    #endregion
+
     #region Debug
-    private bool isPressingDebugKey(KeyCode key)
+    public bool isPressingDebugKey(KeyCode key, bool isDebugMode)
     {
         if (Input.GetKeyDown(key) && isDebugMode)
+            return true;
+        return false;
+    }
+
+    public bool isPressingKey(KeyCode key)
+    {
+        if (Input.GetKeyDown(key))
             return true;
         return false;
     }
