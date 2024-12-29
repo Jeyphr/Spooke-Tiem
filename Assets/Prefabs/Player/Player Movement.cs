@@ -6,17 +6,16 @@ using UnityEngine;
 public class PlayerMovement : MonoBehaviour
 {
     [Header("Object References")]
-    [SerializeField] private CharacterController characterController;
+    [SerializeField] private CharacterController controller;
     [SerializeField] private LayerMask groundLayer;
 
     [Header("Statistics")]
-    [SerializeField] private float moveSpeed        = 10f;
-    [SerializeField] private float speedMultiplier  = 1f;
-    [SerializeField] private float jumpPower        = 2f;
+    [SerializeField] private float moveSpeed       ;
+    [SerializeField] private float speedMultiplier ;
+    [SerializeField] private float jumpPower       ;
 
     //hiddenVars
     private const float gravity = -9.82f;
-    private bool isGrounded, isBonking;
     private bool isFrozen;
     private Vector3 velocity;
 
@@ -29,7 +28,6 @@ public class PlayerMovement : MonoBehaviour
         if (!IsFrozen)
         {
             handleMovement();
-            handleWalking();
             handleJumping();
             handleGravity();
         }
@@ -44,24 +42,25 @@ public class PlayerMovement : MonoBehaviour
         float z = Input.GetAxis("Vertical");
 
         Vector3 move = transform.right * x + transform.forward * z;
-        characterController.Move(move * speedMultiplier * Time.deltaTime);
+        controller.Move(move * (handleWalking()) * Time.deltaTime);
     }
 
-    private void handleWalking()
+    private float handleWalking()
     {
         float _tempMult = 1f;
 
         if (Input.GetButtonDown("Walk"))    { _tempMult = 0.5f; Debug.Log("Walking!"); }
         if (Input.GetButtonUp("Walk"))      { _tempMult = 1f; }
 
-        if (isGrounded)
+        if (groundCheck())
         {
             _tempMult = moveSpeed * speedMultiplier;
         }
         else
         {
-            _tempMult = 1f;
+            _tempMult = moveSpeed;
         }
+        return _tempMult;
     }
 
     private void handleJumping()
@@ -77,25 +76,25 @@ public class PlayerMovement : MonoBehaviour
     #region Gravity
     private void handleGravity()
     {
-        if(isGrounded && velocity.y < 0)
+        if(groundCheck() && velocity.y < 0)
         {
             velocity.y = -2f; // ensures that the player actually sticks to the ground
         }
         else
         {
             velocity.y += gravity * Time.deltaTime;
-            characterController.Move(velocity * Time.deltaTime);
+            controller.Move(velocity * Time.deltaTime);
         }
     }
 
     private bool groundCheck()
     {
-        Transform t = characterController.transform;
+        Transform t = controller.transform;
         Vector3 dwn = t.TransformDirection(Vector3.down);
 
         Debug.DrawRay(t.position, dwn);
 
-        if (Physics.Raycast(t.position, dwn, 2f))
+        if (Physics.Raycast(t.position, dwn, 1.1f))
         {
             return true;
         }

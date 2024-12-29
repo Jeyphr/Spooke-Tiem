@@ -376,7 +376,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 655f40cb39bf35d4aa6d22926b9ab740, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  characterController: {fileID: 4655460866185058663}
+  controller: {fileID: 0}
   groundLayer:
     serializedVersion: 2
     m_Bits: 8

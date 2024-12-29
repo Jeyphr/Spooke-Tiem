@@ -48,7 +48,7 @@ public class UIManagement : MonoBehaviour
             page = uiState.Paused;
             switchUIState(page);
         }
-        if (isPressingKey(KeyCode.Tilde))
+        if (isPressingKey(KeyCode.Slash))
         {
             page = uiState.Terminal;
             switchUIState(page);

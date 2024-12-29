@@ -22,7 +22,7 @@ public class PlayerFreecam : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        Cursor.lockState = CursorLockMode.Locked;
+
     }
 
     // Update is called once per frame
@@ -30,6 +30,8 @@ public class PlayerFreecam : MonoBehaviour
     {
         if (!IsLocked)
         {
+            Cursor.lockState = CursorLockMode.Locked;
+
             float mousex = Input.GetAxis("Mouse X") * Time.deltaTime * hSensitivity;
             float mousey = Input.GetAxis("Mouse Y") * Time.deltaTime * vSensitivity;
 
@@ -40,5 +42,6 @@ public class PlayerFreecam : MonoBehaviour
 
             transform.localRotation = Quaternion.Euler(xRots, 0f, 0f);
         }
+        else { Cursor.lockState = CursorLockMode.None; }
     }
 }
