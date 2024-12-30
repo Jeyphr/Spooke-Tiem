@@ -34,9 +34,6 @@ public class TerminalManager : MonoBehaviour
     private void Awake()
     {
         checkSingleton();
-        createNotif("It Worked!");
-        createNotif("Your Mom!");
-        createNotif("So Original!");
     }
     #endregion
 

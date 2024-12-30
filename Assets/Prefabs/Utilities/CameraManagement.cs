@@ -31,7 +31,8 @@ public class CameraManagement : MonoBehaviour
     private int cameraIndex = 0;
 
     //private vars
-    public Camera cam_active;
+    private Camera cam_active;
+    private TerminalManager tm;
     
 
 
@@ -42,8 +43,10 @@ public class CameraManagement : MonoBehaviour
     }
     private void Start()
     {
+        tm = TerminalManager.FindAnyObjectByType<TerminalManager>();
         arrCams = findAllCamsInScene();
         setCurrentCamera(cam_start);
+        swapCameras(cam_active);
     }
     private void Update()
     {
@@ -73,13 +76,13 @@ public class CameraManagement : MonoBehaviour
     {
         if (swapCam == null)
         {
-            Debug.Log(swapCam.name + " is Null");
+            tm.createNotif(swapCam.name + "is Null.");
             return;
         }
 
         if(cam_active == swapCam)
         {
-            Debug.Log(swapCam.name + " is Swap Cam");
+            tm.createNotif(swapCam.name + "is already the active camera.");
             return;
         }
 
@@ -97,13 +100,13 @@ public class CameraManagement : MonoBehaviour
     {
         if (lookatPos == null)
         {
-            Debug.Log("Attempted to look at null transform");
+            tm.createNotif(lookatPos.name + " is null.");
             return;
         }
 
         if (cam_active == null)
         {
-            Debug.Log("Attempted to make a null camera look");
+            tm.createNotif(cam_active + " is null.");
             return;
         }
         cam_active.transform.LookAt(lookAtPos);
@@ -141,7 +144,7 @@ public class CameraManagement : MonoBehaviour
     {
         if (cam == null)
         {
-            Debug.Log(cam.name + " is null");
+            tm.createNotif(cam.name + " is null.");
             return;
         }
 
@@ -160,7 +163,7 @@ public class CameraManagement : MonoBehaviour
         lockPlayer(cam);
         if (cam == null || cam.enabled == false)
         {
-            Debug.Log("Cam is either null or disabled.");
+            tm.createNotif(cam.name + " is either disabled or null.");
             return;
         }
         cam_active = cam;
@@ -229,6 +232,7 @@ public class CameraManagement : MonoBehaviour
     {
         if (Instance != null && Instance != this)
         {
+            Debug.Log("There exists another copy of Camera Management");
             Destroy(this);
         }
         else

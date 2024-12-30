@@ -10,7 +10,7 @@ public class UIManagement : MonoBehaviour
     /// the various pause screens and hud elements
     /// </summary>
     public static UIManagement Instance { get; private set; }
-    public TerminalManager terminalManager;
+    private TerminalManager tm;
 
     //vars
     public enum uiState
@@ -38,7 +38,7 @@ public class UIManagement : MonoBehaviour
 
     private void Start()
     {
-        //Debug.Log("uimanageer: " + inputDookickey.name);
+        tm = TerminalManager.FindAnyObjectByType<TerminalManager>();
     }
 
     private void Update()
