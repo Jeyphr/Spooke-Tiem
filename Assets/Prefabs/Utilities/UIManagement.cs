@@ -32,8 +32,8 @@ public class UIManagement : MonoBehaviour
         checkSingleton(); //THIS ONE GOES FIRST DUMBASS
 
 
-
-        switchUIState(uiState.Terminal);
+        page = uiState.Terminal;
+        switchUIState();
     }
 
     private void Start()
@@ -45,40 +45,34 @@ public class UIManagement : MonoBehaviour
     {
         if (isPressingKey(KeyCode.Escape))
         {
-            page = uiState.Paused;
-            switchUIState(page);
+            switchUIState(uiState.Paused);
         }
         if (isPressingKey(KeyCode.Slash))
         {
-            page = uiState.Terminal;
-            switchUIState(page);
+            switchUIState(uiState.Terminal);
         }
         if (isPressingKey(KeyCode.Tab))
         {
-            page = uiState.Shop;
-            switchUIState(page);
+            switchUIState(uiState.Shop);
         }
 
         if (isPressingDebugKey(KeyCode.J, isDebugMode))
         {
-            page = uiState.Paused;
-            switchUIState(page);
+            switchUIState(uiState.Paused);
         }
         if (isPressingDebugKey(KeyCode.K, isDebugMode))
         {
-            page = uiState.Terminal;
-            switchUIState(page);
+            switchUIState(uiState.Terminal);
         }
         if (isPressingDebugKey(KeyCode.L, isDebugMode))
         {
-            page = uiState.Shop;
-            switchUIState(page);
+            switchUIState(uiState.Shop);
         }
     }
     #endregion
 
     #region UI Switcher
-    public void switchUIState(uiState swappedUI)
+    public void switchUIState(uiState state = uiState.Gameplay)
     {
         /*
         if (swappedUI == page)
@@ -88,7 +82,7 @@ public class UIManagement : MonoBehaviour
         }
         */
 
-        switch (page)
+        switch (state)
         {
             case uiState.Gameplay:
                 returnToGameplay();
