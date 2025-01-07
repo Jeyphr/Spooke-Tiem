@@ -55,6 +55,7 @@ public class CameraManagement : MonoBehaviour
         if (isPressingDebugKey(KeyCode.J, isDebugMode))
         {
             cameraIndex++;
+
             Debug.Log("Camera Index: " + cameraIndex);
             if (cameraIndex < arrCams.Length)
             {

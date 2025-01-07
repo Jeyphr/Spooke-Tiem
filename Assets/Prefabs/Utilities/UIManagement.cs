@@ -18,10 +18,10 @@ public class UIManagement : MonoBehaviour
         Gameplay,
         Paused,
         Terminal,
-        Shop
+        Inventory
     }
     public uiState  page;
-    public Canvas   gamePlayScreen, pausedScreen, terminalScreen, shopScreen;
+    public Canvas   gamePlayScreen, pausedScreen, terminalScreen, inventoryScreen;
     public bool     isDebugMode = false;
     private bool    notOnGameplay = false;
     
@@ -53,7 +53,7 @@ public class UIManagement : MonoBehaviour
         }
         if (isPressingKey(KeyCode.Tab))
         {
-            switchUIState(uiState.Shop);
+            switchUIState(uiState.Inventory);
         }
 
         if (isPressingDebugKey(KeyCode.J, isDebugMode))
@@ -66,7 +66,7 @@ public class UIManagement : MonoBehaviour
         }
         if (isPressingDebugKey(KeyCode.L, isDebugMode))
         {
-            switchUIState(uiState.Shop);
+            switchUIState(uiState.Inventory);
         }
     }
     #endregion
@@ -118,7 +118,7 @@ public class UIManagement : MonoBehaviour
                 }
                 break;
 
-            case uiState.Shop:
+            case uiState.Inventory:
                 if (notOnGameplay)
                 {
                     returnToGameplay();
@@ -126,7 +126,7 @@ public class UIManagement : MonoBehaviour
                 else
                 {
                     hideAllCanvases();
-                    showCanvas(shopScreen);
+                    showCanvas(inventoryScreen);
 
                     notOnGameplay = true;
                 }
@@ -159,7 +159,7 @@ public class UIManagement : MonoBehaviour
     private void hideAllCanvases()
     {
         hideCanvas(terminalScreen);
-        hideCanvas(shopScreen);
+        hideCanvas(inventoryScreen);
         hideCanvas(pausedScreen);
         hideCanvas(gamePlayScreen);
     }

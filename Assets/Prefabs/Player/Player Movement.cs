@@ -7,6 +7,7 @@ public class PlayerMovement : MonoBehaviour
 {
     [Header("Object References")]
     [SerializeField] private CharacterController controller;
+    [SerializeField] private Camera playerCam, nmeCam;
     [SerializeField] private LayerMask groundLayer;
 
     [Header("Statistics")]
@@ -15,6 +16,8 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private float jumpPower       ;
 
     //hiddenVars
+    private CameraManagement cm;
+
     private const float gravity = -9.82f;
     private bool isFrozen;
     private Vector3 velocity;
@@ -29,9 +32,15 @@ public class PlayerMovement : MonoBehaviour
         {
             handleMovement();
             handleJumping();
+            handleCameraSwitching();
             handleGravity();
         }
 
+    }
+
+    private void Start()
+    {
+        cm = FindAnyObjectByType<CameraManagement>();
     }
     #endregion
 
@@ -68,6 +77,32 @@ public class PlayerMovement : MonoBehaviour
         if (groundCheck() && Input.GetButton("Jump"))
         {
             velocity.y = Mathf.Sqrt(jumpPower * -2f * gravity);
+        }
+    }
+
+    private void handleCameraSwitching()
+    {
+        if (Input.GetButtonDown("Cams"))
+        {
+            bool _isWatchingCams = false;
+            if (_isWatchingCams)
+            {
+                cm.swapCameras(playerCam);
+            }
+            else 
+            {
+                cm.swapCameras(nmeCam);
+                _isWatchingCams = true;
+            }
+            Debug.Log("Switching Cameras!");
+        }
+    }
+
+    private void handleInteract()
+    {
+        if (Input.GetButtonDown("Interact"))
+        {
+            Debug.Log("Interacting!");
         }
     }
 

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.AI;
+using Random = System.Random;
 
 public class NMEMovement : MonoBehaviour
 {
@@ -28,17 +29,30 @@ public class NMEMovement : MonoBehaviour
     
 
     //vars
-    public bool isDebugMode;
-    public bool isOmniscient;
-    public bool isPlayerSpotted;
-    public int  agression, maximumAgression;
+    public bool     isDebugMode;
+    public bool     isOmniscient;
+    private bool    isPlayerSpotted;
+    private bool    cantPatrol;
 
-    private bool cantPatrol;
+    [Header("Timers")]
+    [SerializeField] private int      maximumAgression;
+    [SerializeField] private int      maxExposure;
+    [SerializeField] private int      maxThinkTimer;
+
+    private int     exposure;
+    private int     agression;
+    private int     thinkTimer;
+
+    [Header("Statistics")]
+    [SerializeField] private int      agentSpeed;
+
+
 
     //const
-    const float updateSpeed = 0.1f;
-    const float stalkSpeed = 5f;
-    const float patrolSpeed = 10f;
+    const float updateTick  = 0.1f;
+    const float stalkTick   = 10f;
+    const float patrolTick  = 15f;
+    const float randomTick  = 20f;
 
 
     #region Generic
@@ -78,54 +92,56 @@ public class NMEMovement : MonoBehaviour
     #region State Machine
     private void swapMoveState(nmeState moveState)
     {
-
-        stopStates();
-        switch (moveState)
+        if (!isDebugMode)
         {
-            case nmeState.Idle:
-                if (checkState(moveState))
-                {
-                    stateEnum = moveState;
-                    stopStates();
-                    StartCoroutine(Idle());
-                }
-                break;
+            stopStates();
+            switch (moveState)
+            {
+                case nmeState.Idle:
+                    if (checkState(moveState))
+                    {
+                        stateEnum = moveState;
+                        stopStates();
+                        StartCoroutine(Idle());
+                    }
+                    break;
 
-            case nmeState.Chasing:
-                if (checkState(moveState))
-                {
-                    stateEnum = moveState;
-                    stopStates();
-                    StartCoroutine(Chasing());
-                }
-                break;
+                case nmeState.Chasing:
+                    if (checkState(moveState))
+                    {
+                        stateEnum = moveState;
+                        stopStates();
+                        StartCoroutine(Chasing());
+                    }
+                    break;
 
-            case nmeState.Stalking:
-                if (checkState(moveState))
-                {
-                    stateEnum = moveState;
-                    stopStates();
-                    StartCoroutine(Stalking());
-                }
-                break;
+                case nmeState.Stalking:
+                    if (checkState(moveState))
+                    {
+                        stateEnum = moveState;
+                        stopStates();
+                        StartCoroutine(Stalking());
+                    }
+                    break;
 
-            case nmeState.Patrolling:
-                if (checkState(moveState))
-                {
-                    stateEnum = moveState;
-                    stopStates();
-                    StartCoroutine(Patrolling());
-                }
-                break;
+                case nmeState.Patrolling:
+                    if (checkState(moveState))
+                    {
+                        stateEnum = moveState;
+                        stopStates();
+                        StartCoroutine(Patrolling());
+                    }
+                    break;
 
-            case nmeState.Random:
-                if (checkState(moveState))
-                {
-                    stateEnum = moveState;
-                    stopStates();
-                    StartCoroutine(Random());
-                }
-                break;
+                case nmeState.Random:
+                    if (checkState(moveState))
+                    {
+                        stateEnum = moveState;
+                        stopStates();
+                        StartCoroutine(Random());
+                    }
+                    break;
+            }
         }
     }
 
@@ -142,7 +158,11 @@ public class NMEMovement : MonoBehaviour
     #region Navigation Methods
     private IEnumerator Chasing()
     {
-        WaitForSeconds _wait = new WaitForSeconds(updateSpeed);
+        WaitForSeconds _wait = new WaitForSeconds(updateTick);
+
+        //vars
+        agent.speed = agentSpeed * 2;
+
         while (enabled)
         {
             agent.SetDestination(goal.position);
@@ -162,7 +182,10 @@ public class NMEMovement : MonoBehaviour
         #endregion
 
         System.Random _rand = new System.Random();
-        WaitForSeconds _wait = new WaitForSeconds(patrolSpeed);
+        WaitForSeconds _wait = new WaitForSeconds(patrolTick);
+
+        //vars
+        agent.speed = agentSpeed;
 
         while (enabled)
         {
@@ -184,19 +207,42 @@ public class NMEMovement : MonoBehaviour
 
     private IEnumerator Stalking()
     {
-        yield return null;
+        WaitForSeconds _wait = new WaitForSeconds(stalkTick);
+
+        Transform _stalkPoint = goal;
+        agent.speed = agentSpeed * 1.5f;
+        while (enabled)
+        {
+            _stalkPoint.position = goal.position;
+            agent.SetDestination(_stalkPoint.position);
+            yield return _wait;
+        }
     }
 
-    private IEnumerator Random()
+    private IEnumerator Random()                                    //unfinished. Figure this shit out later.
     {
-        yield return null;
+        WaitForSeconds _wait = new WaitForSeconds(randomTick);
+
+        Transform _randPoint = goal;
+        agent.speed = agentSpeed * 1.5f;
+        while (enabled)
+        {
+            _randPoint.position = goal.position;
+            agent.SetDestination(_randPoint.position);
+            yield return _wait;
+        }
     }
 
     private IEnumerator NME_Brain()
     {
         //vars
-        WaitForSeconds _wait = new WaitForSeconds(updateSpeed);
+        WaitForSeconds _wait = new WaitForSeconds(updateTick);
+        Random rand = new Random();
+
+        //these ought to be set right here
         agression = maximumAgression;
+        thinkTimer = maxThinkTimer;
+
         while (enabled)
         {
             if (lineOfSight() && !isOmniscient)
@@ -225,11 +271,49 @@ public class NMEMovement : MonoBehaviour
 
 
                     StopAllCoroutines();                    //bizzare bug makes it so I MUST STOP ALL COROUTINES!!!
-                    swapMoveState(nmeState.Patrolling);     //This is temporary.
+                    swapMoveState(nmeState.Stalking);       //This is temporary. (no, I found a better way... definitely)
                     StartCoroutine(NME_Brain());
                 }
             }
 
+            else                                            //this probably shouldn't be a part of this funciton... oh well.
+            {
+                thinkTimer--;
+                if (stateEnum == nmeState.Idle)
+                {
+                    thinkTimer--;
+                }
+
+                if (thinkTimer <= 0)
+                {
+                    int _randIndex = rand.Next(3);
+                    thinkTimer = maxThinkTimer;
+                    StopAllCoroutines();
+
+                    switch (_randIndex)
+                    {
+                        case 0:
+                            swapMoveState(nmeState.Patrolling);
+                            break;
+
+                        case 1:
+                            swapMoveState(nmeState.Idle);
+                            break;
+
+                        case 2:
+                            swapMoveState(nmeState.Stalking);
+                            break;
+
+                        case 3:
+                            swapMoveState(nmeState.Random);
+                            break;
+
+                    }
+                    StartCoroutine(NME_Brain());
+                }
+            }
+
+            //good lord reading this again after a few weeks is gonna be a nightmare
             yield return _wait;
         }
     }
@@ -262,7 +346,7 @@ public class NMEMovement : MonoBehaviour
             return true;
         }
 
-        Debug.DrawRay(t.position, dir, Color.red,updateSpeed);
+        Debug.DrawRay(t.position, dir, Color.red,updateTick);
         if (Physics.Raycast(ray, out hit))
         {
             if (hit.collider.tag == "Player")
