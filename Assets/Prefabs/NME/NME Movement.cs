@@ -181,7 +181,7 @@ public class NMEMovement : MonoBehaviour
         }
         #endregion
 
-        System.Random _rand = new System.Random();
+        Random _rand = new Random();
         WaitForSeconds _wait = new WaitForSeconds(patrolTick);
 
         //vars

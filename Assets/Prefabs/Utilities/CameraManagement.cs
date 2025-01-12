@@ -45,8 +45,8 @@ public class CameraManagement : MonoBehaviour
     {
         tm = TerminalManager.FindAnyObjectByType<TerminalManager>();
         arrCams = findAllCamsInScene();
-        setCurrentCamera(cam_start);
-        swapCameras(cam_active);
+
+        swapCameras(cam_start);
     }
     private void Update()
     {
@@ -77,18 +77,17 @@ public class CameraManagement : MonoBehaviour
     {
         if (swapCam == null)
         {
-            tm.createNotif(swapCam.name + "is Null.");
+            tm.createNotif(swapCam.name + " is Null.");
             return;
         }
 
         if(cam_active == swapCam)
         {
-            tm.createNotif(swapCam.name + "is already the active camera.");
+            tm.createNotif(swapCam.name + " is already the active camera.");
             return;
         }
 
         lockPlayer(swapCam);
-
         foreach (var cam in arrCams)
         {
             cam.enabled = false;

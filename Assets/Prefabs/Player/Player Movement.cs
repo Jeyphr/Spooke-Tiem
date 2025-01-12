@@ -19,7 +19,8 @@ public class PlayerMovement : MonoBehaviour
     private CameraManagement cm;
 
     private const float gravity = -9.82f;
-    private bool isFrozen;
+    private const float interactRange = 4f;
+    private bool isFrozen, isOnCams;
     private Vector3 velocity;
 
     public bool IsFrozen { get => isFrozen; set => isFrozen = value; }
@@ -28,12 +29,13 @@ public class PlayerMovement : MonoBehaviour
     #region Generic
     void Update()
     {
+        handleCameraSwitching();
+        handleGravity();
         if (!IsFrozen)
         {
             handleMovement();
             handleJumping();
-            handleCameraSwitching();
-            handleGravity();
+            handleInteract();
         }
 
     }
@@ -84,25 +86,32 @@ public class PlayerMovement : MonoBehaviour
     {
         if (Input.GetButtonDown("Cams"))
         {
-            bool _isWatchingCams = false;
-            if (_isWatchingCams)
-            {
-                cm.swapCameras(playerCam);
-            }
-            else 
+            if (!isOnCams)
             {
                 cm.swapCameras(nmeCam);
-                _isWatchingCams = true;
+                isOnCams = true;
             }
-            Debug.Log("Switching Cameras!");
+            else
+            {
+                cm.swapCameras(playerCam);
+                isOnCams = false;
+            }
         }
     }
 
     private void handleInteract()
     {
+        Transform t = playerCam.transform;
+        Vector3 fwd = t.TransformDirection(Vector3.forward);
+
+        Debug.DrawRay(t.position, fwd);
+
         if (Input.GetButtonDown("Interact"))
         {
-            Debug.Log("Interacting!");
+            if (Physics.Raycast(t.position, fwd, interactRange))
+            {
+                Debug.Log("Got it.");
+            }
         }
     }
 
